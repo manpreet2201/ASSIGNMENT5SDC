@@ -1,7 +1,7 @@
 
 import java.util.Properties;
 
-public class MainClass {
+public class MyIdentity {
 
     public static void setIdentity(Properties prop) {
       prop.setProperty("database", "csci3901");

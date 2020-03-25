@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 
 //For db.cs.dal.ca, you must be running under Dal's VPN software
 
-public class DBAccess {
+public class MainClass {
 
 	// Open a connection to a database, submit a query for the contents of a table,
 	// and
@@ -37,10 +37,10 @@ public class DBAccess {
 		// hard-coded
 
 		Properties identity = new Properties(); // Using a properties structure, just to hide info from other users.
-		MainClass me = new MainClass(); // My own class to identify my credentials. Ideally load Properties from a
+		MyIdentity me = new MyIdentity(); // My own class to identify my credentials. Ideally load Properties from a
 											// file instead and this class disappears.
 
-		//final String xmlFilePath = "C:\\Users\\User\\Desktop\\xml1.xml";
+		// final String xmlFilePath = "C:\\Users\\User\\Desktop\\xml1.xml";
 
 		String user;
 		String password;
@@ -52,11 +52,10 @@ public class DBAccess {
 		boolean isDate1 = false;
 		String start_date1 = sc.next(); // reads string
 		String datePattern = "^\\d{4}-\\d{2}-\\d{2}$";
-		
 
 		isDate = start_date1.matches(datePattern);
 		while (isDate == false) {
-			System.out.println("enter date in yyyy-mm-dd");
+			System.out.println("enter start date in yyyy-mm-dd");
 			start_date1 = sc.next();
 			isDate = start_date1.matches(datePattern);
 
@@ -74,10 +73,11 @@ public class DBAccess {
 
 		}
 		System.out.println("Enter the path of file:");
-		String path=sc.next();
+		String path = sc.next();
 
-		// int ordernumber;
-		// String query = "select * from employees limit 3;";
+		// This query gives the customer name, address, number of orders in the period,
+		// and total
+		// order value
 		String query = "with orderWithDetails as " + "(select orders.CustomerID,SUM(Quantity*UnitPrice) as total "
 				+ ",orders.OrderID,orders.OrderDate from orders "
 				+ "INNER JOIN orderdetails ON orders.OrderID=orderdetails.OrderID " + "AND orders.OrderDate between '"
@@ -89,12 +89,18 @@ public class DBAccess {
 				+ "customers.CustomerID=orderWithDetails.CustomerID AND " + "orderWithDetails.OrderDate between '"
 				+ start_date1 + "' and ' " + end_date1 + " ' " + "group by customers.CustomerID";
 
-		// Get the info for logging into the database.
+		// This query for each product category, the category name and for each product
+		// in
+		// the category report the name, supplier, units sold, and value of product sold
 
 		String query1 = "select categories.CategoryName,pro.ProductID,pro.ProductName,sup.CompanyName,sum(Quantity) as units_sold,sum(Quantity)* UnitPrice as value_of_product "
 				+ "from orders  natural join orderdetails   natural join products as pro "
 				+ "natural join suppliers as sup natural join categories where orders.OrderDate between  '"
 				+ start_date1 + "' and '" + end_date1 + "' " + "group by ProductID";
+
+		// This query gives the supplier name, address, number of products that we sold,
+		// and the
+		// total value of business that we sold from this supplier’s products.
 		String query2 = "with suppinfo as (select products.supplierid, productid, "
 				+ "orders.OrderDate,sum(Quantity * UnitPrice) as product_value from "
 				+ "products natural join orders natural join orderdetails where OrderDate " + "between '" + start_date1
@@ -136,19 +142,20 @@ public class DBAccess {
 			// ResultSet is the sequence of returned rows. Its initial position is
 			// before the first data set so calling "next"
 			// at the start queues up the first answer.
-			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilderFactory documentFactory = DocumentBuilderFactory.newInstance();//creating document  builder instance
 
 			DocumentBuilder documentBuilder = documentFactory.newDocumentBuilder();
 
-			Document document = documentBuilder.newDocument();
+			Document document = documentBuilder.newDocument();//cretaing document
 
-			Element root = document.createElement("year_end_summary");
+			//Creating the elements using the Element class and its appendChild method.
+			Element root = document.createElement("year_end_summary");//root element
 			document.appendChild(root);
 
-			Element year = document.createElement("year");
+			Element year = document.createElement("year");//child element of year_end_summary
 			root.appendChild(year);
 
-			Element start_date = document.createElement("start_date");
+			Element start_date = document.createElement("start_date");//start_date element
 			start_date.appendChild(document.createTextNode(start_date1));
 			year.appendChild(start_date);
 
@@ -156,39 +163,37 @@ public class DBAccess {
 			end_date.appendChild(document.createTextNode(end_date1));
 			year.appendChild(end_date);
 
-			Element customer_list = document.createElement("customer_list");
+			Element customer_list = document.createElement("customer_list");//child element of root
 			root.appendChild(customer_list);
 
-			Element product_list = document.createElement("product_list");
+			Element product_list = document.createElement("product_list");//child element of root
 			root.appendChild(product_list);
 
-			Element supplier_list = document.createElement("supplier_list");
+			Element supplier_list = document.createElement("supplier_list");//child element of root
 			root.appendChild(supplier_list);
 
-//			Element customer_list = document.createElement("customer_list");
-//			root.appendChild(customer_list);
-//			
+			//gets the result from first query
 			while (resultSet.next()) {
 
 				// It is possible to get the columns via name.
 				// It is also possible to get the columns via the column number,
 				// which starts at 1.
 				// e.g. resultSet.getSTring(2);
-				// System.out.println("Employee number: " + resultSet.getInt(1));
-
 				String customer_name1 = (resultSet.getString("customer_name") == null) ? ""
 						: resultSet.getString("customer_name");
 				String street_address1 = (resultSet.getString("street_address") == null) ? ""
 						: resultSet.getString("street_address");
-				String city1 = (resultSet.getString("City")==null )? "" : resultSet.getString("City");
+				String city1 = (resultSet.getString("City") == null) ? "" : resultSet.getString("City");
 
 				String postalcode1 = (resultSet.getString("PostalCode") == null) ? ""
 						: resultSet.getString("PostalCode");
 				String region1 = (resultSet.getString("Region") == null) ? "" : resultSet.getString("Region");
 //				String postalcode1 = resultSet.getString("PostalCode");
 				String country1 = (resultSet.getString("Country") == null) ? "" : resultSet.getString("Country");
-				Integer num_orders1 = resultSet.getInt("num_orders");
-				Double product_value = resultSet.getDouble("product_value");
+				String num_orders1 = (resultSet.getString("num_orders") == null) ? ""
+						: resultSet.getString("num_orders");
+				String product_value = (resultSet.getString("product_value") == null) ? ""
+						: resultSet.getString("product_value");
 
 				Element customer = document.createElement("customer");
 				customer_list.appendChild(customer);
@@ -217,23 +222,23 @@ public class DBAccess {
 				postal_code.appendChild(document.createTextNode(postalcode1));
 				address.appendChild(postal_code);
 
-////				
 				Element country = document.createElement("country");
 				country.appendChild(document.createTextNode(country1));
 				address.appendChild(country);
 
 				Element num_orders = document.createElement("num_orders");
-				num_orders.appendChild(document.createTextNode(String.valueOf(num_orders1)));
+				num_orders.appendChild(document.createTextNode(num_orders1));
 				customer.appendChild(num_orders);
 
 				Element order_value = document.createElement("order_value");
-				order_value.appendChild(document.createTextNode(String.valueOf(product_value)));
+				order_value.appendChild(document.createTextNode(product_value));
 				customer.appendChild(order_value);
 
-//	                System.out.println("Order number: " + resultSet.getString("ContactName"));
+				// System.out.println("Order number: " + resultSet.getString("ContactName"));
 				// System.out.println("order date: " + resultSet.getString(""));
 			}
 
+			//gets result from second query
 			ResultSet resultSet1 = null;
 			resultSet1 = statement1.executeQuery(query1);
 			while (resultSet1.next()) {
@@ -290,9 +295,11 @@ public class DBAccess {
 				String region1 = (resultSet2.getString("Region") == null) ? "" : resultSet2.getString("Region");
 //				String postalcode1 = resultSet.getString("PostalCode");
 				String country1 = (resultSet2.getString("Country") == null) ? "" : resultSet2.getString("Country");
-				Integer num_orders1 = resultSet2.getInt("num_orders");
-				Double product_value1 = resultSet2.getDouble("product_value");
-				
+				String num_orders1 = (resultSet2.getString("num_orders") == null) ? ""
+						: resultSet2.getString("num_orders");
+				String product_value1 = (resultSet2.getString("product_value") == null) ? ""
+						: resultSet2.getString("product_value");
+
 				Element supplier = document.createElement("supplier");
 				supplier_list.appendChild(supplier);
 
@@ -311,7 +318,6 @@ public class DBAccess {
 				city.appendChild(document.createTextNode(city1));
 				address.appendChild(city);
 
-				
 				Element region = document.createElement("region");
 				region.appendChild(document.createTextNode(region1));
 				address.appendChild(region);
@@ -320,27 +326,27 @@ public class DBAccess {
 				postal_code.appendChild(document.createTextNode(postalcode1));
 				address.appendChild(postal_code);
 
-////				
 				Element country = document.createElement("country");
 				country.appendChild(document.createTextNode(country1));
 				address.appendChild(country);
-				
+
 				Element num_products = document.createElement("num_products");
-				num_products.appendChild(document.createTextNode(String.valueOf(num_orders1)));
+				num_products.appendChild(document.createTextNode(num_orders1));
 				supplier.appendChild(num_products);
 
 				Element product_value = document.createElement("product_value");
-				product_value.appendChild(document.createTextNode(String.valueOf(product_value1)));
+				product_value.appendChild(document.createTextNode(product_value1));
 				supplier.appendChild(product_value);
 
-////			
 			}
 
-			TransformerFactory transformerFactory = TransformerFactory.newInstance();
+			TransformerFactory transformerFactory = TransformerFactory.newInstance();//Create a new Transformer instance 
+			                                                                           
+			//and a new DOMSource instance.
 			Transformer transformer = transformerFactory.newTransformer();
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 			DOMSource domSource = new DOMSource(document);
-			StreamResult streamResult = new StreamResult(path);
+			StreamResult streamResult = new StreamResult(new File(path));
 
 			// If you use
 			// StreamResult result = new StreamResult(System.out);
@@ -349,18 +355,18 @@ public class DBAccess {
 
 			transformer.transform(domSource, streamResult);
 
-			System.out.println("Done creating XML File");
+			// System.out.println("Done creating XML File");
 
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+
 		} catch (SQLException e) {
-			e.printStackTrace();
+
 		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
+
 		} catch (TransformerConfigurationException e) {
-			e.printStackTrace();
+
 		} catch (TransformerException e) {
-			e.printStackTrace();
+
 		} finally {
 			// Always close connections, otherwise the MySQL database runs out of them.
 
