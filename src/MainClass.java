@@ -50,8 +50,10 @@ public class MainClass {
 		System.out.print("Enter start date yyyy-mm-dd: ");
 		boolean isDate = false;
 		boolean isDate1 = false;
+		
+		//enter start date 
 		String start_date1 = sc.next(); // reads string
-		String datePattern = "^\\d{4}-\\d{2}-\\d{2}$";
+		String datePattern = "^\\d{4}-\\d{2}-\\d{2}$";//to check format of date 
 
 		isDate = start_date1.matches(datePattern);
 		while (isDate == false) {
@@ -63,13 +65,14 @@ public class MainClass {
 		// System.out.println("Date :"+ start_date1+": matches with the this date
 		// Pattern:"+datePattern+"Ans:"+isDate);
 		System.out.print("Enter end date in yyyy-mm-dd: ");
+		//enter end date
 		String end_date1 = sc.next();
 		isDate1 = end_date1.matches(datePattern);
 
 		while (isDate1 == false) {
 			System.out.println("enter end date in yyyy-mm-dd");
 			end_date1 = sc.next();
-			isDate1 = end_date1.matches(datePattern);
+			isDate1 = end_date1.matches(datePattern);//checking fomat of date
 
 		}
 		System.out.println("Enter the path of file:");
