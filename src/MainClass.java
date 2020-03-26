@@ -193,10 +193,9 @@ public class MainClass {
 				String region1 = (resultSet.getString("Region") == null) ? "" : resultSet.getString("Region");
 //				String postalcode1 = resultSet.getString("PostalCode");
 				String country1 = (resultSet.getString("Country") == null) ? "" : resultSet.getString("Country");
-				String num_orders1 = (resultSet.getString("num_orders") == null) ? ""
-						: resultSet.getString("num_orders");
-				String product_value = (resultSet.getString("product_value") == null) ? ""
-						: resultSet.getString("product_value");
+				Integer num_orders1 = resultSet.getInt("num_orders");
+				Double product_value = resultSet.getDouble("product_value");
+						
 
 				Element customer = document.createElement("customer");
 				customer_list.appendChild(customer);
@@ -230,11 +229,11 @@ public class MainClass {
 				address.appendChild(country);
 
 				Element num_orders = document.createElement("num_orders");
-				num_orders.appendChild(document.createTextNode(num_orders1));
+				num_orders.appendChild(document.createTextNode(String.valueOf(num_orders1)));
 				customer.appendChild(num_orders);
 
 				Element order_value = document.createElement("order_value");
-				order_value.appendChild(document.createTextNode(product_value));
+				order_value.appendChild(document.createTextNode(String.valueOf(product_value)));
 				customer.appendChild(order_value);
 
 				// System.out.println("Order number: " + resultSet.getString("ContactName"));
@@ -298,10 +297,8 @@ public class MainClass {
 				String region1 = (resultSet2.getString("Region") == null) ? "" : resultSet2.getString("Region");
 //				String postalcode1 = resultSet.getString("PostalCode");
 				String country1 = (resultSet2.getString("Country") == null) ? "" : resultSet2.getString("Country");
-				String num_orders1 = (resultSet2.getString("num_orders") == null) ? ""
-						: resultSet2.getString("num_orders");
-				String product_value1 = (resultSet2.getString("product_value") == null) ? ""
-						: resultSet2.getString("product_value");
+				Integer num_orders1 = resultSet2.getInt("num_orders");
+				Double product_value1 = resultSet2.getDouble("product_value");
 
 				Element supplier = document.createElement("supplier");
 				supplier_list.appendChild(supplier);
@@ -334,11 +331,11 @@ public class MainClass {
 				address.appendChild(country);
 
 				Element num_products = document.createElement("num_products");
-				num_products.appendChild(document.createTextNode(num_orders1));
+				num_products.appendChild(document.createTextNode(String.valueOf(num_orders1)));
 				supplier.appendChild(num_products);
 
 				Element product_value = document.createElement("product_value");
-				product_value.appendChild(document.createTextNode(product_value1));
+				product_value.appendChild(document.createTextNode(String.valueOf(product_value1)));
 				supplier.appendChild(product_value);
 
 			}
