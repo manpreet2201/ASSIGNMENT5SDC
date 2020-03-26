@@ -158,6 +158,7 @@ public class MainClass {
 			Element year = document.createElement("year");//child element of year_end_summary
 			root.appendChild(year);
 
+			
 			Element start_date = document.createElement("start_date");//start_date element
 			start_date.appendChild(document.createTextNode(start_date1));
 			year.appendChild(start_date);
@@ -178,10 +179,9 @@ public class MainClass {
 			//gets the result from first query
 			while (resultSet.next()) {
 
-				// It is possible to get the columns via name.
-				// It is also possible to get the columns via the column number,
-				// which starts at 1.
-				// e.g. resultSet.getSTring(2);
+				
+				
+				// get value from database and store in the xml element
 				String customer_name1 = (resultSet.getString("customer_name") == null) ? ""
 						: resultSet.getString("customer_name");
 				String street_address1 = (resultSet.getString("street_address") == null) ? ""
